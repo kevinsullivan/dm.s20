@@ -1,9 +1,3 @@
--- Boolean objects
-
-/-
-Booleans
--/
-
 #eval tt
 #eval ff
 
