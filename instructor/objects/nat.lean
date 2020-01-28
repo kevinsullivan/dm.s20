@@ -10,3 +10,5 @@ Natural numbers
 
 #eval nat.succ (nat.succ nat.zero)
 #eval 2 
+
+#eval nat.succ (nat.succ (nat.succ (nat.succ nat.zero)))
