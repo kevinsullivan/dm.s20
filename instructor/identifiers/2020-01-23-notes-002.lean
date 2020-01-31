@@ -8,15 +8,15 @@ def pop := prod.mk
 
 #eval pop
 
-/- Oops. Immutable.
+-- Oops. Immutable. So this won't work.
 def pop := prod.mk         
         (prod.mk 2 tt) 
         (prod.mk "Hello" 3)
--/
+
 
 /-
-Big conversation about mutable vs immutable, functional vs imperative,
-referential transparency.
+Big conversation about mutable vs immutable, functional 
+vs imperative, referential transparency.
 -/
 
 def b := tt
