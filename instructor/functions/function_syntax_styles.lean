@@ -64,18 +64,27 @@ def add'' : ℕ → ℕ → ℕ
 def quad'' : ℕ → ℕ → ℕ → ℕ → ℕ 
 | a b c x := a*x^2 + b*x + c
 
+
+-- Functions with arguments of several types
+
+-- Example: if (b==tt) then n else m
+
+-- by cases
 def if_then_else : bool → ℕ → ℕ → ℕ 
 | tt n m := n
 | ff n m := m
 
+-- try it out
 #eval if_then_else ff 3 4
 
+-- by cases using match
 def ite' (b : bool) (n m : ℕ) :=
     match b with
     | tt := n
     | ff := m
     end
 
+-- by cases using lambda
 def ite'' : bool → ℕ → ℕ → ℕ := 
     λ (b : bool) (n m : ℕ), 
         match b with
