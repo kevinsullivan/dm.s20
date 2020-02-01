@@ -1,8 +1,8 @@
 /-
-UVa CS2102/Sullivan, Spring 2020, Homework #1
+UVa CS2102/Sullivan, Spring 2020, Homework #2
 
 This homework assignment is due by noon on Tuesday, 
-Feb 4. Submit your result through the HW#1 tab under
+Feb 4. Submit your result through the HW#2 tab under
 the Assignments category on Collab. Do so by uploading
 a completed version of this file.
 
