@@ -1,5 +1,10 @@
 /-
-This homework assignment is due by noon on Tuesday, Feb 4.
+UVa CS2102/Sullivan, Spring 2020, Homework #1
+
+This homework assignment is due by noon on Tuesday, 
+Feb 4. Submit your result through the HW#1 tab under
+the Assignments category on Collab. Do so by uploading
+a completed version of this file.
 
 The goal of this assignment is to develop and evaluate 
 your ability to write simple abstract data types in Lean,
@@ -7,7 +12,6 @@ comprising both inductive data definitions and definitions
 of functions, in several syntactic styles, that operate 
 on values of such types. 
 -/
-
 
 /- 
 #1. In the space after this comment, first define a data 
