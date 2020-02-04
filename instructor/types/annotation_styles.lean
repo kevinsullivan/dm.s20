@@ -4,6 +4,8 @@ def z''' : ℕ := nat.zero
 def z := 0
 
 -- If you want a rational or real, you'd have to say so
+-- To make this code work also requires mathlib imports
+-- We won't pursue that issue right now 
 
 def q := (0 : ℚ)
 def r := (0 : ℝ)
