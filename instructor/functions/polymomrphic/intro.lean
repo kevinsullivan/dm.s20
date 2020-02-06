@@ -28,9 +28,20 @@ arguments:
 
 def dm_id' (α : Type) (a : α): α := a
 
+#check dm_id'
+
 #eval dm_id' bool tt
 #eval dm_id' ℕ 3
 #eval dm_id' string "Hello, Logic!"
+
+def fun_id_bool := dm_id' bool
+def fun_id_nat := dm_id' nat
+def fun_id_string := dm_id' string
+
+#check fun_id_bool
+#check fun_id_nat
+#check fun_id_string
+
 
 /-
 A little thought leads us to see that

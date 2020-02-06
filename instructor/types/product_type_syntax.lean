@@ -62,20 +62,20 @@ is what's really happening in Java, too.
 namespace ex3
 
 structure prod_nat_nat : Type :=
-mk :: (x : ℕ) (y : ℕ)
+mk :: (fst : ℕ) (snd : ℕ)
 
 /-
 No more explicit projection functions!
 -/
 
-#eval prod_nat_nat.x (prod_nat_nat.mk 3 4)
-#eval prod_nat_nat.y (prod_nat_nat.mk 3 4)
-#eval (prod_nat_nat.mk 3 4).x
-#eval (prod_nat_nat.mk 3 4).y
+#eval prod_nat_nat.fst (prod_nat_nat.mk 3 4)
+#eval prod_nat_nat.snd (prod_nat_nat.mk 3 4)
+#eval (prod_nat_nat.mk 3 4).fst
+#eval (prod_nat_nat.mk 3 4).snd
 
 def p := (prod_nat_nat.mk 3 4)
-#eval p.x
-#eval p.y
+#eval p.fst
+#eval p.snd
 
 
 

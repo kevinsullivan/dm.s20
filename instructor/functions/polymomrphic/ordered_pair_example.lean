@@ -13,6 +13,9 @@ pairs of strings, etc.
 inductive my_prod (α : Type) : Type
 | mk : α → α → my_prod
 
+def p := my_prod.mk 3 3
+
+
 /-
 
 Note: The fact that we use a Greek letter,
@@ -30,7 +33,7 @@ def p2 := swap ℕ p1 -- type argument explicit
 
 
 /-
-Impliit type arguments
+Implicit type arguments
 -/
 
 /-
