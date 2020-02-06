@@ -6,28 +6,28 @@
 #check λ (a b : ℕ), a+b
 #check λ (a b c x: ℕ), a*x^2 + b*x + c
 
--- Application expressions
+-- Function *application* expressions
 
 #check (λ (n : ℕ), 0) 5
 #check (λ (n : ℕ), n) 5
 #check (λ (a b : ℕ), a+b) 3 2
 #check (λ (a b c x: ℕ), a*x^2 + b*x + c) 1 2 3 10
 
--- Giving functions names
+-- Binding names (identifiers) to function values
 
 def z := λ (n : ℕ), 0
 def id_nat := λ (n : ℕ), n
 def add := λ (a b : ℕ), a+b
 def quad := λ (a b c x: ℕ), a*x^2 + b*x + c
 
--- Use names as shorthands
+-- Now we can use names as shorthands
 
 #eval z 5
 #eval id_nat 5
 #eval add 2 3
 #eval quad 1 2 3 10
 
--- extra: partial evaluation
+-- Extra: partial evaluation
 
 def q := quad 1 2 3
 #check q
@@ -35,11 +35,11 @@ def q := quad 1 2 3
 #eval q 0
 #eval q 5
 
+
 -- Lambda-style
 -- C-style
 -- By cases
 -- Tactic script
-
 
 -- C-style
 
@@ -67,7 +67,7 @@ def quad'' : ℕ → ℕ → ℕ → ℕ → ℕ
 
 -- Functions with arguments of several types
 
--- Example: if (b==tt) then n else m
+-- Example: if (b==tt) then (n:ℕ) else (m:ℕ)
 
 -- by cases
 def if_then_else : bool → ℕ → ℕ → ℕ 
@@ -84,7 +84,7 @@ def ite' (b : bool) (n m : ℕ) :=
     | ff := m
     end
 
--- by cases using lambda
+-- by cases using lambda and match
 def ite'' : bool → ℕ → ℕ → ℕ := 
     λ (b : bool) (n m : ℕ), 
         match b with
@@ -93,18 +93,3 @@ def ite'' : bool → ℕ → ℕ → ℕ :=
         end
 
 
--- Quick preview: higher-order functions
-
-def inc (n : ℕ) := n + 1
-def sq (n : ℕ) := n^2
-
-def is := inc ∘ sq  -- function composition
-#eval is 7
-
--- How to implement it yourself
--- Takes two functions and returns composition
-def comp (f g : ℕ → ℕ) :=
-    λ (n : ℕ), 
-        f (g n)
-
-#eval (comp inc sq) 7
