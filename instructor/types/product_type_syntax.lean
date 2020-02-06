@@ -62,7 +62,7 @@ is what's really happening in Java, too.
 namespace ex3
 
 structure prod_nat_nat : Type :=
-mk :: (x : ℕ) (y : ℕ): prod_nat_nat
+mk :: (x : ℕ) (y : ℕ)
 
 /-
 No more explicit projection functions!
