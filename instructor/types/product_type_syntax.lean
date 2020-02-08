@@ -8,6 +8,8 @@ namespace ex1
 inductive prod_nat_nat : Type
 | mk : ℕ → ℕ → prod_nat_nat
 
+def p := prod_nat_nat.mk 3 5
+
 def fst (p : prod_nat_nat) : ℕ :=
     match p with 
         | prod_nat_nat.mk x y := x
@@ -15,7 +17,7 @@ def fst (p : prod_nat_nat) : ℕ :=
 
 def sec (p : prod_nat_nat) : ℕ :=
     match p with 
-        | prod_nat_nat.mk x y := x
+        | prod_nat_nat.mk x y := y
     end
 
 #eval fst (prod_nat_nat.mk 3 4)
