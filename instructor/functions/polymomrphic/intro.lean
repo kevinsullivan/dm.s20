@@ -55,7 +55,7 @@ work: Lean will infer and fill in the
 missing value!
 -/
 
-#eval dm_id' _ tt
+#eval dm_id' _  ff 
 #eval dm_id' _ 3
 #eval dm_id' _ "Hello, Logic!"
 

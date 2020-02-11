@@ -31,6 +31,7 @@ def swap (α : Type) : my_prod α → my_prod α
 
 def p2 := swap ℕ p1 -- type argument explicit
 
+#reduce p2
 
 /-
 Implicit type arguments

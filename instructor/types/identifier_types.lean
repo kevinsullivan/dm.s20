@@ -10,11 +10,11 @@ the identifier is bound.
 -/
 
 def b' : bool := (tt : bool) -- types explicit
-def b'' := tt                -- types inferred
+def b := tt                -- types inferred
 
 -- type inference
 
-def s' : string := "I love logic!"
-def n' : ℕ := 1
-def n'' := 1    -- Lean assumes (1 : ℕ)
+def s : string := "I love logic!"
+def n : ℕ := 1
+def n' := 1    -- Lean assumes (1 : ℕ)
 
