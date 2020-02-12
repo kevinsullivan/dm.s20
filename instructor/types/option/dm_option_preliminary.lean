@@ -1,5 +1,11 @@
 namespace hidden
 
+
+
+
+
+
+
 inductive dm_option (α : Type): Type
 | none : dm_option
 | some (a : α) : dm_option
@@ -12,7 +18,7 @@ p(n) = 0 if n=0 and p(n) is undefined otherwise.
 
 def p : ℕ → dm_option ℕ 
 | nat.zero := dm_option.some nat.zero
-| _ := dm_option.none ℕ     -- needs explicit type!
+| _ := dm_option.none ℕ       -- needs explicit type!
 
 
 end hidden

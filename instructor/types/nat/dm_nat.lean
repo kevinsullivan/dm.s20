@@ -8,8 +8,16 @@ closed.
 namespace hidden
 
 inductive dm_nat : Type
-| zero
-| succ (n' : dm_nat)
+| zero : dm_nat
+| succ (n' : dm_nat) : dm_nat
+
+
+def zro := dm_nat.zero
+def one := dm_nat.succ zro
+def two := dm_nat.succ one
+def three := dm_nat.succ (dm_nat.succ (dm_nat.succ dm_nat.zero))
+def four := dm_nat.succ three
+def five := dm_nat.succ four
 
 
 def successor (n : dm_nat) :=
@@ -19,7 +27,7 @@ def successor (n : dm_nat) :=
 def predecessor (n : dm_nat) :=
 match n with
 | dm_nat.zero := dm_nat.zero
-| (dm_nat.succ n') := _
+| (dm_nat.succ n') := n'
 end
 
 

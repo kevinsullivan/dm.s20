@@ -19,8 +19,4 @@ inductive dm_option (α : Type): Type
 | none {} : dm_option      -- {} after constructor
 | some (a : α) : dm_option
 
-def p : ℕ → dm_option ℕ 
-| nat.zero := dm_option.some nat.zero
-| _ := dm_option.none     -- type arg now implicit!
-
 end hidden

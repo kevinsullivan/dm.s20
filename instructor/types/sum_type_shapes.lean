@@ -72,7 +72,7 @@ not to name the coord arguments to each of the
 constructors.
 -/
 
-def toString (s : shape) : string :=
+def toString (s : shape) :=
 match s with
 | (shape.point _) := "point"
 | (shape.segment _ _) := "segment"
@@ -80,6 +80,41 @@ match s with
 | (shape.rectangle _ _ _ _) := "rectangle"
 end
 
+def toString' : shape → string :=
+λ (s : shape),
+match s with
+| (shape.point _) := "point"
+| (shape.segment _ _) := "segment"
+| (shape.triangle _ _ _) := "triangle"
+| (shape.rectangle _ _ _ _) := "rectangle"
+end
+
+def toString'' : shape → string
+| (shape.point _) := "point"
+| (shape.segment _ _) := "segment"
+| (shape.triangle _ _ _) := "triangle"
+| (shape.rectangle _ _ _ _) := "rectangle"
+
+
+
+
+def toString' : shape → string :=
+λ s,
+match s with
+| (shape.point _) := "point"
+| (shape.segment _ _) := "segment"
+| (shape.triangle _ _ _) := "triangle"
+| (shape.rectangle _ _ _ _) := "rectangle"
+end
+
+def toString'' : shape → string
+| (shape.point _) := "point"
+| (shape.segment _ _) := "segment"
+| (shape.triangle _ _ _) := "triangle"
+| (shape.rectangle _ _ _ _) := "rectangle"
+
+
+#eval toString (shape.segment (coords.mk 3 4) (coords.mk 2 9))
 /-
 In summary, what you have here is a new kind of
 example of an inductive type: one with multiple
