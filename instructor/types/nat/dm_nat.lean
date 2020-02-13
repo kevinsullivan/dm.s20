@@ -12,13 +12,6 @@ inductive dm_nat : Type
 | succ (n' : dm_nat) : dm_nat
 
 
-def zro := dm_nat.zero
-def one := dm_nat.succ zro
-def two := dm_nat.succ one
-def three := dm_nat.succ (dm_nat.succ (dm_nat.succ dm_nat.zero))
-def four := dm_nat.succ three
-def five := dm_nat.succ four
-
 
 def successor (n : dm_nat) :=
     dm_nat.succ n
@@ -30,6 +23,15 @@ match n with
 | (dm_nat.succ n') := n'
 end
 
-
-
 end hidden
+
+
+-- let's look at Lean's definition of nat
+
+#check nat
+
+-- it's exactly as we've written it
+
+
+#eval nat.succ nat.zero
+#eval nat.pred (nat.succ nat.zero)
