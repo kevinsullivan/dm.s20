@@ -65,6 +65,58 @@ def add : dm_nat → dm_nat → dm_nat
 | dm_nat.zero m := m
 | (dm_nat.succ n') m := dm_nat.succ (add n' m)
 
+-- by case analysis on *both* arguments
+def equals : dm_nat → dm_nat → bool
+| dm_nat.zero dm_nat.zero := tt
+| dm_nat.zero _ := ff
+| _ dm_nat.zero := ff
+| (dm_nat.succ n') (dm_nat.succ m') := equals n' m'
+
+#eval equals dm_nat.zero dm_nat.zero
+#eval equals dm_nat.zero (dm_nat.succ dm_nat.zero)
+#eval equals (dm_nat.succ dm_nat.zero) dm_nat.zero 
+#eval equals (dm_nat.succ dm_nat.zero) (dm_nat.succ dm_nat.zero)  
+#eval equals (dm_nat.succ dm_nat.zero) (dm_nat.succ (dm_nat.succ dm_nat.zero))
+#eval equals (dm_nat.succ (dm_nat.succ dm_nat.zero)) (dm_nat.succ dm_nat.zero) 
+
+
+def sub : dm_nat → dm_nat → dm_nat 
+| dm_nat.zero dm_nat.zero := dm_nat.zero
+| dm_nat.zero _ := dm_nat.zero
+| n dm_nat.zero := n
+| (dm_nat.succ n') (dm_nat.succ m') := sub n' m'
+
+
+#reduce sub dm_nat.zero dm_nat.zero
+#reduce sub dm_nat.zero (dm_nat.succ dm_nat.zero)
+#reduce sub (dm_nat.succ dm_nat.zero) dm_nat.zero 
+#reduce sub (dm_nat.succ dm_nat.zero) (dm_nat.succ dm_nat.zero)  
+#reduce sub (dm_nat.succ dm_nat.zero) (dm_nat.succ (dm_nat.succ dm_nat.zero))
+#reduce sub (dm_nat.succ (dm_nat.succ dm_nat.zero)) (dm_nat.succ dm_nat.zero) 
+
+
+def fib : dm_nat → dm_nat
+| dm_nat.zero := dm_nat.zero 
+| (dm_nat.succ dm_nat.zero) := (dm_nat.succ dm_nat.zero) 
+| (dm_nat.succ (dm_nat.succ n'')) := add (fib n'') (fib (dm_nat.succ n''))
+
+/-
+fib 0 = 0
+fib 1 = 1
+fib 2 = 1
+fib 3 = 2
+fib 4 = 3
+fib 5 = 5
+fib 6 = 8
+-/
+
+#reduce fib (dm_nat.succ (dm_nat.succ dm_nat.zero))
+
+def fac : ℕ → ℕ 
+| 0 := 1 
+| (nat.succ n') := (nat.succ n') * (fac n')
+
+#eval fac 5
 
 -- 3 + 3
 /-
@@ -134,6 +186,12 @@ def mult : dm_nat → dm_nat → dm_nat
 #reduce mult three three
 
 /-
+4 * 3
+3 + (3 * 3)
+3 + (3 + (2 * 3))
+-/
+
+/-
 mult 3 2
 2 + mult 2 2
 2 + (2 + mult 1 2)
@@ -166,6 +224,9 @@ def sum_to : dm_nat → dm_nat
 | dm_nat.zero := dm_nat.zero
 | (dm_nat.succ n') := add (dm_nat.succ n') (sum_to n')
 
+def fac : dm_nat → dm_nat
+| dm_nat.zero := dm_nat.succ dm_nat.zero
+| (dm_nat.succ n') := mult (dm_nat.succ n') (fac n')
 
 end hidden
 
