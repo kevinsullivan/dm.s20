@@ -30,6 +30,8 @@ John Smith with id 123 and a salary of 50.
 
 def e1 := employee.mk "John Smith" 123 50 tt
 
+#eval e1.salary
+
 /-
 C. Write a function called update_salary that 
 takes an value of the employee type and a natural 
@@ -40,7 +42,7 @@ to the given value.
 -/
 
 def update_salary : employee → ℕ → employee
-| (employee.mk n i s a) r := (employee.mk n i r a)
+| (employee.mk n i _ a) r := (employee.mk n i r a)
 
 /-
 D. Use #reduce or #eval to evaluate an expression
@@ -63,7 +65,7 @@ scissors, return rock.
 -/
 
 inductive rock_paper_scissors : Type
-| rock
+| rock : rock_paper_scissors
 | paper
 | scissors
 
@@ -86,19 +88,19 @@ doll has zero shells around it, of course.
 -/
 
 inductive nested_doll : Type 
-| solid_doll : nested_doll
-| shell_doll (n : nested_doll) : nested_doll
+| solid_doll 
+| shell_doll (n : nested_doll) 
 
 open nested_doll 
 
-def d0 := solid_doll
+def d0 := nested_doll.solid_doll
 def d1 := shell_doll d0
 def d2 := shell_doll d1 
 -- ad infinitum
 
 def depth : nested_doll → ℕ 
 | solid_doll := 0
-| (shell_doll n) := 1 + depth n
+| (shell_doll d) := 1 + depth d
 
 #eval depth d2
 
