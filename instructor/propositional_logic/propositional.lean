@@ -50,22 +50,8 @@ from which it is constructed.
 -/
 
 /-
-Recall how we defined a few Boolean operators.
+Recall how we define Boolean operators.
 -/
-
--- and
-def band' :  bool → bool → bool
-| tt tt := tt
-| tt ff := ff
-| ff tt := ff
-| ff ff := ff
-
--- or
-def bor' :  bool → bool → bool
-| tt tt := tt
-| tt ff := tt
-| ff tt := tt
-| ff ff := ff
 
 -- implies
 def bimp : bool → bool → bool
