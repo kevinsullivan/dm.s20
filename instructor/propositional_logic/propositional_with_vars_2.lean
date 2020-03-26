@@ -52,8 +52,8 @@ inductive pExp : Type
 
 open pExp
 
-open var 
-
+-- Here are some variable expressions
+--
 def P := pVar P_var        -- pVar (var.mk 0) 
 def Q := pVar Q_var        -- pVar Q_var
 def R := pVar R_var        -- pVar R_var
@@ -87,8 +87,17 @@ def bimp : bool → bool → bool
 We formalize the "assignment" of a bool meaning
 (value) to each well formed expression as a 
 *function* from expressions (values of type pExp)
-to bool. Here are the rules.
+to bool. We will then be able to evaluate a
+propositional logic expression that includes
+variables, as long as an interpretation (such a
+function) is provided, so that we can determine
+the Boolean meaning of each variable "under that
+particular interpretation." We will thus have to
+add an interpretation (pExp → bool) argument to
+our pEval function.
 -/
+
+-- Here are a few different interpretations
 
 def interp_all_false : var → bool
 | _ := ff
@@ -96,6 +105,8 @@ def interp_all_false : var → bool
 def interp_all_true : var → bool
 | _ := tt
 
+
+-- Here's our extended semantic evaluator
 def pEval : pExp → (var → bool) → bool
 | pTrue _ := tt 
 | pFalse _ := ff
@@ -104,20 +115,18 @@ def pEval : pExp → (var → bool) → bool
 | (pAnd e1 e2) i := band (pEval e1 i) (pEval e2 i) 
 | (pOr e1 e2) i := bor (pEval e1 i) (pEval e2 i)
 | (pImp e1 e2) i := bimp (pEval e1 i) (pEval e2 i)
-|
+| (pIff e1 e2) i := tt  --stubbed out
 
 
 /-
-If P → Q then Q <- P
-tt tt tt
-tt ff ff
-..
+Notation is just "syntactic sugar!"
 -/
+notation e1 ∧ e2 :=  pAnd e1 e2
+notation e1 ∨ e2 :=  pOr e1 e2
+notation ¬ e := pNot e
+notation e1 > e2 := pImp e1 e2
+notation e1 ↔ e2 := pIff e1 e2
 
-
-/-
-Examples
--/
 
 #eval pEval P interp_all_false
 #eval pEval P interp_all_true
