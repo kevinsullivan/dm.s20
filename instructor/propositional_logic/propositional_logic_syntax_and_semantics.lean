@@ -1,7 +1,12 @@
 inductive var : Type
 | mk : ℕ → var
 
--- SYNTAX
+
+/-
+SYNTAX
+-/
+
+-- Abstract syntax
 inductive pExp : Type
 | pTrue : pExp
 | pFalse : pExp
@@ -13,7 +18,19 @@ inductive pExp : Type
 | pIff : pExp → pExp → pExp
 | pXor : pExp → pExp → pExp 
 
--- Utility function
+-- Concrete syntax ("syntactic sugar")
+notation e1 ∧ e2 :=  pAnd e1 e2 --desugaring
+notation e1 ∨ e2 :=  pOr e1 e2
+notation ¬ e := pNot e
+notation e1 > e2 := pImp e1 e2
+notation e1 ↔ e2 := pIff e1 e2
+notation e1 ⊕ e2 := pXor e1 e2
+
+/-
+SEMANTICS
+-/
+
+-- Helper functions
 def bimp : bool → bool → bool
 | tt tt := tt
 | tt ff := ff
@@ -28,7 +45,7 @@ def biff : bool → bool → bool
 
 open pExp
 
--- ABSTRACT SEMANTICS
+-- SEMANTICS
 def pEval : pExp → (var → bool) → bool
 | pTrue _ := tt 
 | pFalse _ := ff
@@ -39,12 +56,4 @@ def pEval : pExp → (var → bool) → bool
 | (pImp e1 e2) i := bimp (pEval e1 i) (pEval e2 i)
 | (pIff e1 e2) i := biff (pEval e1 i) (pEval e2 i)  -- HOMEWORK Solution
 | (pXor e1 e2) i := xor (pEval e1 i) (pEval e2 i)
-
--- CONCRETE SYNTAX ("syntactic sugar")
-notation e1 ∧ e2 :=  pAnd e1 e2 --desugaring
-notation e1 ∨ e2 :=  pOr e1 e2
-notation ¬ e := pNot e
-notation e1 > e2 := pImp e1 e2
-notation e1 ↔ e2 := pIff e1 e2
-notation e1 ⊕ e2 := pXor e1 e2
 
