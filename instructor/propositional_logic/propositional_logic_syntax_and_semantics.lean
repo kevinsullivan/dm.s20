@@ -19,6 +19,7 @@ inductive pExp : Type
 | pXor : pExp → pExp → pExp 
 
 open pExp
+
 -- Concrete syntax ("syntactic sugar")
 notation e1 ∧ e2 :=  pAnd e1 e2 --desugaring
 notation e1 ∨ e2 :=  pOr e1 e2
@@ -43,8 +44,6 @@ def biff : bool → bool → bool
 | tt ff := ff
 | ff tt := ff
 | ff ff := tt
-
-open pExp
 
 -- Operational semantics
 def pEval : pExp → (var → bool) → bool
