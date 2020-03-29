@@ -20,6 +20,12 @@ def bimp : bool → bool → bool
 | ff tt := tt
 | ff ff := tt
 
+def biff : bool → bool → bool
+| tt tt := tt
+| tt ff := ff
+| ff tt := ff
+| ff ff := tt
+
 open pExp
 
 -- ABSTRACT SEMANTICS
@@ -31,7 +37,7 @@ def pEval : pExp → (var → bool) → bool
 | (pAnd e1 e2) i := band (pEval e1 i) (pEval e2 i) 
 | (pOr e1 e2) i := bor (pEval e1 i) (pEval e2 i)
 | (pImp e1 e2) i := bimp (pEval e1 i) (pEval e2 i)
-| (pIff e1 e2) i := tt  -- HOMEWORK
+| (pIff e1 e2) i := biff (pEval e1 i) (pEval e2 i)  -- HOMEWORK Solution
 | (pXor e1 e2) i := xor (pEval e1 i) (pEval e2 i)
 
 -- CONCRETE SYNTAX ("syntactic sugar")
