@@ -18,6 +18,7 @@ inductive pExp : Type
 | pIff : pExp → pExp → pExp
 | pXor : pExp → pExp → pExp 
 
+open pExp
 -- Concrete syntax ("syntactic sugar")
 notation e1 ∧ e2 :=  pAnd e1 e2 --desugaring
 notation e1 ∨ e2 :=  pOr e1 e2
