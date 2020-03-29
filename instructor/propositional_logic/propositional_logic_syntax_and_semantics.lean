@@ -45,7 +45,7 @@ def biff : bool → bool → bool
 
 open pExp
 
--- SEMANTICS
+-- Operational semantics
 def pEval : pExp → (var → bool) → bool
 | pTrue _ := tt 
 | pFalse _ := ff
