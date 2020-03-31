@@ -38,7 +38,8 @@ def pEval : pExp → (var → bool) → bool
 notation e1 ∧ e2 :=  pAnd e1 e2 --desugaring
 notation e1 ∨ e2 :=  pOr e1 e2
 notation ¬ e := pNot e
-notation e1 > e2 := pImp e1 e2
+notation e1 > e2 := pImp e1 e2 
+-- infixr ` >> ` : 30 := pImp 
 notation e1 ↔ e2 := pIff e1 e2
 notation e1 ⊕ e2 := pXor e1 e2
 
