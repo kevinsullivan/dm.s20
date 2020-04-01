@@ -2,9 +2,29 @@ import .propositional_logic_syntax_and_semantics
 
 open pExp
 
+-- left associative
+-- associative
 #check 2 + 3 + 4
 #check (2 + 3) + 4
 #check 2 + (3 + 4) 
+#eval 2 + 3 + 4
+#eval (2 + 3) + 4
+#eval 2 + (3 + 4) 
+
+-- - is left associative
+-- - is not associative
+#check 5 - 3 - 1
+#check 5 - (3 - 1)
+#check (5 - 3) - 1
+#eval (5 - 3) - 1
+#eval 5 - (3 - 1)
+
+-- precedence, bind strenth
+#check 3 * 4 + 5
+#check (3 * 4) + 5
+#check 3 * (4 + 5)
+#eval (3 * 4) + 5
+#eval 3 * (4 + 5)
 
 /-
 Motivation: Can't overlad →. First
@@ -25,9 +45,14 @@ def Q := pVar (var.mk 1)
 def R := pVar (var.mk 2)
 
 -- associativity is wrong
+-- left associative X
 #check P > Q > R
 #check P > (Q > R)
 #check (P > Q) > R
+
+#check nat → nat → nat
+#check nat → (nat → nat)
+#check (nat → nat) → nat
 
 -- associativity is wrong
 #check P ∧ Q > Q > R 
@@ -108,21 +133,23 @@ reserve infixl ` || `:65
 
 -- Here's our new notation
 
-infixr ` >> ` : 30 := pImp 
+infixr ` >> ` : 25 := pImp 
 
 -- associativity is correct
 #check P >> Q >> R
 #check P >> (Q >> R)
 #check (P >> Q) >> R
 
--- precedence is correct
+-- precedence is (almost) correct
 #check P ∧ Q >> Q >> R 
+#check (P ∧ Q >> Q) >> R 
 #check (P ∧ Q) >> (Q >> R) 
 #check P ∧ (Q >> Q) >> R 
 
 #check P ∨ Q >> Q >> R 
 #check P ∨ Q >> (Q >> R)
 #check P ∨ (Q >> (Q >> R)) --uh oh, another bug!
+#check (P ∨ Q) >> (Q >> R)
 
 /-
 What is wrong?

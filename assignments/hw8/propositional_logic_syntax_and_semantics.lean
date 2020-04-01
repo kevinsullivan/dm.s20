@@ -1,7 +1,22 @@
+
+/-
+Syntax, abstract and concrete, and semantics, of propositional logic.
+Import this file's definitions use this language and associated tools.
+-/
+
+
+
+/-
+VARIABLES
+-/
 inductive var : Type
 | mk : ℕ → var
 
--- SYNTAX
+
+
+/-
+ABSTRACT SYNTAX
+-/
 inductive pExp : Type
 | pTrue : pExp
 | pFalse : pExp
@@ -13,7 +28,14 @@ inductive pExp : Type
 | pIff : pExp → pExp → pExp
 | pXor : pExp → pExp → pExp 
 
--- Utility function
+open pExp
+
+
+
+/-
+HELPER/UTILITY FUNCTIONS
+-/
+
 def bimp : bool → bool → bool
 | tt tt := tt
 | tt ff := ff
@@ -26,9 +48,11 @@ def biff : bool → bool → bool
 | ff tt := ff
 | ff ff := tt
 
-open pExp
 
--- ABSTRACT SEMANTICS
+/-
+ABSTRACT SEMANTICS
+-/
+
 def pEval : pExp → (var → bool) → bool
 | pTrue _ := tt 
 | pFalse _ := ff
@@ -37,15 +61,18 @@ def pEval : pExp → (var → bool) → bool
 | (pAnd e1 e2) i := band (pEval e1 i) (pEval e2 i) 
 | (pOr e1 e2) i := bor (pEval e1 i) (pEval e2 i)
 | (pImp e1 e2) i := bimp (pEval e1 i) (pEval e2 i)
-| (pIff e1 e2) i := biff (pEval e1 i) (pEval e2 i)
+| (pIff e1 e2) i := biff (pEval e1 i) (pEval e2 i) 
 | (pXor e1 e2) i := xor (pEval e1 i) (pEval e2 i)
 
--- CONCRETE SYNTAX ("syntactic sugar")
-notation e1 ∧ e2 :=  pAnd e1 e2 --desugaring
+/- 
+CONCRETE SYNTAX
+-/
+
+notation e1 ∧ e2 :=  pAnd e1 e2
 notation e1 ∨ e2 :=  pOr e1 e2
 notation ¬ e := pNot e
--- notation e1 > e2 := pImp e1 e2 
-infixr ` >> ` : 25 := pImp 
+-- notation e1 > e2 := pImp e1 e2 -- Bug
+infixr ` >> ` : 25 := pImp -- Fix 
 notation e1 ↔ e2 := pIff e1 e2
 notation e1 ⊕ e2 := pXor e1 e2
 

@@ -74,15 +74,15 @@ def false_elim := pFalse >> P
 def true_imp := pTrue >> P
 -- etc
 
-def and_intro := P >> Q >> (P ∧ Q)
+def and_intro := P >> Q >> P ∧ Q
 
-def and_elim_left := (P ∧ Q) >> P
+def and_elim_left := P ∧ Q >> P
 
-def and_elim_right := (P ∧ Q) >> Q
+def and_elim_right := P ∧ Q >> Q
 
-def or_intro_left := P >> (P ∨ Q)
+def or_intro_left := P >> P ∨ Q
 
-def or_intro_right := Q >> (P ∨ Q)
+def or_intro_right := Q >> P ∨ Q
 
 def or_elim := (P ∨ Q) >> (P >> R) >> (Q >> R) >> R
 
@@ -116,27 +116,6 @@ def affirm_disjunct := (P ∨ Q) >> (P >> ¬ Q)
 
 def deny_antecedent := (P >> Q) >> (¬ P >> ¬ Q)
 axioms A B : Prop
-
-#check A ∨ B ∧ B ∨ A
-#check (A ∨ B) ∧ (B ∨ A)
-#check A ∨ (B ∧ B) ∨ A
-
-#check  A ∨ B → B ∨ A
-#check  (A ∨ B) → (B ∨ A)
-#check A ∨ (B → B) ∨ A
-
-#check A → B ↔ B → A 
-#check (A → B) ↔ (B → A) 
-#check A → (B ↔ B) → A
-
-#check  A ↔ B ∨ B ↔ A
-#check  (A ↔ B) ∨ (B ↔ A)
-#check  A ↔ (B ∨ B) ↔ A
-
-#check A → B ∨ B → A
-#check (A → B) ∨ (B → A)
-#check A → (B ∨ B) → A
-
 
 /-
 Study the valid rules and learn their names. 
