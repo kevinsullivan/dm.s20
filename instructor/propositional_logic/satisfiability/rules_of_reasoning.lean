@@ -1,5 +1,4 @@
 import .propositional_logic_syntax_and_semantics
-import .properties_of_propositions
 
 open pExp
 
@@ -9,12 +8,8 @@ def Q := pVar (var.mk 1)
 def R := pVar (var.mk 2)
 
 def true_intro : pExp := pTrue
-#reduce valid true_intro
 
 def false_elim := pFalse >> P
-#reduce valid false_elim 
-
-#eval pEval false_elim _
 
 def true_imp := pTrue >> P
 
@@ -57,6 +52,5 @@ def neg_intro := (P >> pFalse) >> (¬ P)
 def affirm_consequence := (P >> Q) >> (Q >> P)
 
 def affirm_disjunct := (P ∨ Q) >> (P >> ¬ Q)
-#reduce valid affirm_disjunct
 
 def deny_antecedent := (P >> Q) >> (¬ P >> ¬ Q)
