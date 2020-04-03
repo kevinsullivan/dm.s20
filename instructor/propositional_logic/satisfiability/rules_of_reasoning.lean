@@ -44,6 +44,7 @@ def modus_tollens := (P >> Q) >> (¬ Q >> ¬ P)
 def neg_elim := (¬ ¬ P) >> P
 def excluded_middle := P ∨ (¬ P)
 def neg_intro := (P >> pFalse) >> (¬ P)
+
 def affirm_consequence := (P >> Q) >> (Q >> P)
 def affirm_disjunct := (P ∨ Q) >> (P >> ¬ Q)
 def deny_antecedent := (P >> Q) >> (¬ P >> ¬ Q)
