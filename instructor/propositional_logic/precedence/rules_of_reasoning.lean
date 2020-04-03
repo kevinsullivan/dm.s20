@@ -71,24 +71,27 @@ def true_intro : pExp := pTrue
 def false_elim := pFalse >> P
 -- answer here
 
+#eval pEval false_elim _
+#eval pEval false_elim _
+
 def true_imp := pTrue >> P
 -- etc
 
-def and_intro := P >> Q >> (P ∧ Q)
+def and_intro := P >> Q >> P ∧ Q
 
-def and_elim_left := (P ∧ Q) >> P
+def and_elim_left := P ∧ Q >> P
 
-def and_elim_right := (P ∧ Q) >> Q
+def and_elim_right := P ∧ Q >> Q
 
-def or_intro_left := P >> (P ∨ Q)
+def or_intro_left := P >> P ∨ Q
 
-def or_intro_right := Q >> (P ∨ Q)
+def or_intro_right := Q >> P ∨ Q
 
-def or_elim := (P ∨ Q) >> (P >> R) >> (Q >> R) >> R
+def or_elim := P ∨ Q >> (P >> R) >> (Q >> R) >> R
 
-def iff_intro :=   (P >> Q) >> (Q >> P) >> (P ↔ Q)
+def iff_intro := (P >> Q) >> (Q >> P) >> (P ↔ Q)
 
-def iff_intro' := ((P >> Q) ∧ (Q >> P)) >> (P ↔ Q)
+def iff_intro' := (P >> Q) ∧ (Q >> P) >> (P ↔ Q)
 
 def iff_elim_left := (P ↔ Q) >> (P >> Q)
 
@@ -111,6 +114,12 @@ def excluded_middle := P ∨ (¬ P)
 def neg_intro := (P >> pFalse) >> (¬ P)
 
 def affirm_consequence := (P >> Q) >> (Q >> P)
+-- fallacy
+/-
+Counterexample. Just because I know that if it's raining the streets are wet,
+I don't necessarily know that if the streets wet it's raining, because there
+could be other causes for the street to be wet.
+-/
 
 def affirm_disjunct := (P ∨ Q) >> (P >> ¬ Q)
 

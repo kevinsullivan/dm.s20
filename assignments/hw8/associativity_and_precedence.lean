@@ -2,6 +2,10 @@ import .propositional_logic_syntax_and_semantics
 
 open pExp
 
+#check 2 + 3 + 4
+#check (2 + 3) + 4
+#check 2 + (3 + 4) 
+
 /-
 Motivation: Can't overlad →. First
 attempt at a solution: overload >
