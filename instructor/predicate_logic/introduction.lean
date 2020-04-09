@@ -21,13 +21,15 @@ Predicate logic:
 Examples:
 
 - ∀ (n : ℕ), n = 0 ∨ n ≠ 0
-- ∀ (n : ℕ), ∃ (m : ℕ), n - m = 0
+- ∀ (n : ℕ), (∃ (m : ℕ), n - m = 0)
 - ∀ (p1 : Person), ∀ (p2 : Person), likes p1 p2 -- likes is a relation
 - ∀ (p1 : Person), ∃ (p2 : Person), likes p2 p1
+- ∃ (p1 : Person), ∀ (p2 : Person), likes p2 p1
 - ∃ (p1 : Person), ∀ (p2 : Person), likes p2 p1
 - ∃ (p1 : Person), ∀ (p2 : Person), ¬ likes p2 p1
 - ∀ (o : Object), madeOfUranium o → relativelyHeavy o -- properties
 - ∃ (a b c : ℕ), a^2 + b^2 = c^2                -- the pythagorean predicate
+- ∃ (a b c : ℕ), a>0 ∧ b>0 ∧ c>0 ∧ a^2 + b^2 = c^2 -- the pythagorean predicate
 - ∃ (a b c : ℕ), pythagorean a b c              -- pythagorean is a relation
 - ¬ exist (a b c n: ℕ), a>0 ∧ b>0 ∧ c>0 ∧ n>2 ∧ a^n+b^n=c^n -- Fermat's last theorem
 
@@ -52,7 +54,7 @@ and and introduction to prove the "conjecture". Reminders:
 
 - P ∧ Q → P         (left and elimination)
 - P ∧ Q → Q         (right and elimination)
-- P → Q → P ∧ Q     (and introduction)
+- X → Y → X ∧ Y     (and introduction)
 
 Strategy: To prove the implication, P ∧ Q → Q ∧ P, we have to 
 show that *if we assume* that P ∧ Q is true, which is to say
@@ -72,7 +74,7 @@ Thus is P ∧ Q is true, then Q ∧ P *must* also be true.
 
 
 Exercise: Prove that if P is true then so is P ∨ Q. That is,
-prove P → P ∨ Q.
+prove P → P ∨ Q. or_intro_left.
 
 
 Exercise: Prove that P ∧ Q → P ∨ Q.
@@ -134,39 +136,4 @@ tale highlights the risks of skipping over potentially critical
 details!
 -/
 
-
---def P := pVar (var.mk 0)
---def Q := pVar (var.mk 1)
---def R := pVar (var.mk 2)
-
-axiom P : Prop
-axiom Q : Prop
-axiom R : Prop
-
-/-
-def true_intro : pExp := pTrue
-def false_elim := pFalse >> P
-def true_imp := pTrue >> P
-def and_intro := P >> Q >> P ∧ Q
-def and_elim_left := P ∧ Q >> P
-def and_elim_right := P ∧ Q >> Q
-def or_intro_left := P >> P ∨ Q
-def or_intro_right := Q >> P ∨ Q
-def or_elim := P ∨ Q >> (P >> R) >> (Q >> R) >> R
-def iff_intro := (P >> Q) >> (Q >> P) >> (P ↔ Q)
-def iff_intro' := (P >> Q) ∧ (Q >> P) >> (P ↔ Q)
-def iff_elim_left := (P ↔ Q) >> (P >> Q)
-def iff_elim_right := (P ↔ Q) >> (Q >> P)
-def arrow_elim := (P >> Q) >> (P >> Q)
-def resolution := (P ∨ Q) >> (¬ Q ∨ R) >> (P ∨ R)
-def unit_resolution := (P ∨ Q) >> ((¬ Q) >> P)
-def syllogism := (P >> Q) >> (Q >> R) >> (P >> R)
-def modus_tollens := (P >> Q) >> (¬ Q >> ¬ P)
-def neg_elim := (¬ ¬ P) >> P
-def excluded_middle := P ∨ (¬ P)
-def neg_intro := (P >> pFalse) >> (¬ P)
-
-def affirm_consequence := (P >> Q) >> (Q >> P)
-def affirm_disjunct := (P ∨ Q) >> (P >> ¬ Q)
-def deny_antecedent := (P >> Q) >> (¬ P >> ¬ Q)
--/
+                            -- sTuCK!
