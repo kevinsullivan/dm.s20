@@ -1,17 +1,40 @@
 
 -- Computational domain
 #check nat
+#check 1
+
 #check string
+#check "hello"
+
 #check bool
+#check tt
+
 -- "computational" types of type, Type (aka Sort 1)
 
 -- Logical domain
 #check true
+#print true
+
+def a_proof_of_nat : ℕ := 8
+theorem a_proof_of_true : true := true.intro
+
 #check false
-#check eq 1 1   -- eq predicate applied to 1 and 2
+
+#check (eq 1) 1   -- eq predicate applied to 1 and 2
+#check (eq 1)
 #check 1 = 1    -- infix notation for eq
+
+#print eq
+
+lemma pf_one_eq_one : 1 = 1 := eq.refl 1
+lemma pf_one_eq_two : 1 = 2 := (eq.refl 2)
+
+#check eq.refl 3
+
 #check 3 ∈ { n : ℕ | n % 2 = 1}
-#check exists (a b c : ℕ), a^2 + b^2 = c^2
+
+#check ∃ (a b c : ℕ), a^2 + b^2 = c^2
+
 -- propositions formalized as logical types: of type, Prop (Sort 0)
 
 
@@ -36,18 +59,24 @@
 
 
 -- exercises involving proofs of equality
-def pf1 : 1 = 1 := _
-def pf2 : "hello" = "hello" := _
-lemma pf3 : 2 = nat.pred 3 := _     -- vocabulary: minor result
-theorem pf4 : tt = tt := _          -- vocabulary: major result
-theorem pf5 : 1 = 0 := _
+def pf1 : 1 = 1 := eq.refl 1
+def pf2 : "hello" = "hello" := eq.refl "hello"
 
-def sq (n : ℕ) := n^2
+#reduce 2 = nat.pred 3
+
+lemma pf3 : 2 = nat.pred 3 := eq.refl (nat.pred 3)     -- vocabulary: minor result
+
+theorem pf4 : tt = tt := eq.refl tt          -- vocabulary: major result
+theorem pf5 : 1 = 0 := _                -- StUCk!!!
+
+def sq (n : ℕ) : ℕ := n^2
 #reduce (sq 3 = 9)
-lemma pf6 : sq 3 = 9 := _           -- equality of reduced values
-lemma pf7 : sq 5 = 25 := _
 
+lemma pf6 : sq 3 = 9 := eq.refl 9           -- equality of reduced values
+lemma pf7 : sq 5 = 25 := eq.refl 25
 
+example : sq 3 = 9 := eq.refl _
+example : ℕ := 8
 
 -- A logical type that has no values is false.
 -- That's why the proposition, "false", in Lean is false.
@@ -58,7 +87,7 @@ theorem pf8 : false := _
 
 -- The proposition, "true", has one constant constructor/value/proof
 #print true
-theorem pf9 : true := _
+theorem pf9 : true := true.intro
 
 /-
 What we've seen so far is that some propositions are
@@ -74,7 +103,7 @@ inductive MaryIsASoftwareEngineer : Prop
 
 open MaryIsASoftwareEngineer
 
-theorem me1 : MaryIsASoftwareEngineer := knowsFormalMethods
+def me1 : MaryIsASoftwareEngineer := knowsFormalMethods
 theorem me2 : MaryIsASoftwareEngineer := crackProgrammer
 
 /-
@@ -90,6 +119,8 @@ proof/value of the given proposition/type.
 -/
 
 lemma m1 : me1 = me2 := eq.refl me1
+
+theorem bad_news : 0 = 1 := _
 
 
 /-
