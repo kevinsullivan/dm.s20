@@ -57,8 +57,9 @@ inductive prod (α β : Type) : Type
 
 
 -- here's a named example of a value of this type
-def pair1 : prod nat nat := 
-    prod.mk 1 1
+def pair1 := prod.mk 1 1
+
+#reduce pair1
 
 -- by the way, we can use "example" for unnamed values
 example : prod nat nat := prod.mk 1 1
@@ -238,24 +239,138 @@ by applying the reflexive property of equality (to the value,
 -/
 
 -- Here is this proof formalized
+example : or (1=0) (1=1) := or.inr (eq.refl 1) 
 example : or (1=0) (1=1) := or.intro_right (1=0) (eq.refl 1) 
+
+def x : ℕ := 1
+example : ℕ := 1
+
+
+
+
+/-
+NEXT UP: ∀, → 
+-/
+
+/-
+************************************************************
+Universal generalizations. Propositions starting with forall.
+************************************************************
+-/
+
+
+/-
+Introduction rule: To prove "∀ (p : P), Q" show that if you *assume*
+you're given an arbitrary but specific p, you can construct a proof
+of Q. This is the ∀ introduction rule of natural deduction.
+-/
+example : ∀ (n : ℕ), or (n = 0) (n ≠ 0) :=
+  λ (n : ℕ),
+    match n with
+    | nat.zero := or.inl (eq.refl 0)
+    | (nat.succ _) := _    -- Homework
+    end 
+
+/-
+Proof: 
+We start by assuming that we're given an arbitrary but specific 
+natural number, n. Now in this context, all that remains to be
+proved is that n = 0 or n ≠ 0.
+-/
 
 
 /-
 Prove that for any propositions, P and Q, P ∧ Q → P ∨ Q
 -/
 
+def aProp := ∀ (P Q : Prop), and P Q → or P Q 
+
+/-
+We start by assuming that P and Q are arbitrary but specific
+propositions. In this context, what remains to be proved is
+the following implication: and P Q → or P Q. To prove this is
+to prove an implication. We do this in the same way we prove
+a ∀: by assuming that we're given a proof of the premise, P, 
+and showing that, in that context, we can construct a proof 
+of the conclusion, Q.
+-/
+
+lemma and_imp_or_1 : aProp := 
+  λ (P Q : Prop),
+    λ (pq : and P Q),
+      or.inl (and.elim_left pq)
+
+lemma and_imp_or_2  : aProp := 
+  λ (P Q : Prop),
+    λ (pq : and P Q),
+      or.inr (and.elim_right pq)
+
+example : and_imp_or_1 = and_imp_or_2 := eq.refl and_imp_or_2
 
 
 /-
-NEXT UP: ∀, →, ¬ 
+Prove that the "and" connective is commutative.
 -/
 
+theorem and_commutes : ∀ {P Q : Prop}, and P Q → and Q P :=
+λ (P Q : Prop), 
+  λ (pq : and P Q),
+    and.intro 
+      (pq.right) 
+      (pq.left)
 
+/-
+Assume that P and Q are arbitary but specific propositions.
+We are to show that P ∧ Q → Q ∧ P. Suppose we have a proof,
+pq, of P ∧ Q. In this context we need to prove that we can
+construct a proof of Q and P. We do this by applying the and
+introduction rule to a proof of P and to a proof of Q. What
+remains to be proven is that there is a proof of P and a proof
+of Q. But we can get these by applying the left and right and
+eliminations rules to our proof, pq, of P ∧ Q.
+-/
 
-theorem and_imp_or: ∀ { P Q : Prop}, and P Q → or P Q :=
-λ (P Q : Prop) (pq : and P Q), 
-    or.inl (and.left pq)
+/-
+If a proof of a ∀ or → proposition is a function in Lean,
+can we apply these functions to arguments to get results?
+The answer is yes, absolutely, and this idea is in fact
+the *elimination* rule for ∀ and →. If you're given a 
+proof, pf, of either ∀ (p : P), Q, or of P → Q, which are
+in fact equivalent(!), then you can apply pf to a proof or
+value, p : P, to obtain a corresponding value/proof of Q.
+
+As an example, let's apply our proof that and is commutative
+-/
+lemma oneeq1_and_2eq2 : and (1=1) (2=2) :=
+  and.intro (eq.refl 1) (eq.refl 2)
+
+#reduce oneeq1_and_2eq2
+
+/-
+We now use the elimination rule for ∀/→ by *applying* the
+*general* proof of commutative of and to a *specific* proof
+of (and 1=1 2=2) to obtain a specific proof of (and 2=2 1=1)!
+-/
+#reduce and_commutes oneeq1_and_2eq2 
+
+/-
+The *elimination* rule for ∀ all and implication is "apply!"
+-/
+
+/-
+This principal is seen very clearly in the proof of the
+rule of reasoning that Aristotle called "modus ponens." 
+It states that if, for any propositions P and Q, you know
+that P → Q is true and you also know that P is true then
+you can conclude that Q is true. If when it's raining the
+streets are wet (P → Q) and it's raining (P) then it must
+be the case that the streets are wet (Q). We now prove that
+this is a valid form of reasoning.
+-/
+
+theorem arrow_elim : ∀ {P Q : Prop}, (P → Q) → P → Q :=
+λ P Q p2q p,
+  p2q p       ---<<< apply proof of P→Q to proof of P!
 
 
 /- Still to do:
