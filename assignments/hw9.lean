@@ -188,15 +188,56 @@ _
 
 
 
-theorem neg_elim : ∀ (P : Prop), (P ∨ ¬ P) → ¬ ¬ P := _
+theorem neg_elim' : ∀ (P : Prop), ¬ ¬ P → P :=
+λ P,
+λ nnp,
+_           -- STUCK!!
+
+
+theorem neg_elim : ∀ (P : Prop), (P ∨ ¬ P) → (¬ ¬ P → P):= 
+λ P,
+    λ h, 
+        λ nnp,
+            match h with
+            | or.inl p := p
+            | or.inr np := false.elim (nnp np)  -- false elimination
+            end
+
+-- nnp : (¬ P) → false
+-- np : ¬ P
+-- nnp np = false!
+
+-- Let's use H to mean There is a sub-exponential time algorithm for Boolean sat.
+-- ¬ H means that there's not one.
+-- H ∨ ¬H
+
+-- make Lean into a classical logic
+-- axiom em : ∀ (P : Prop), P ∨ ¬ P
+#check classical.em
+
+
 
 
 theorem t10 : ∀ (P : Prop), P ∨ ¬ P :=
 _
 
 
+#check @or.inl
+#check @or.inr
+
 theorem t11 : ∀ (P Q : Prop), ¬ (P ∨ Q) ↔ ¬ P ∧ ¬ Q :=
-_
+λ P Q, 
+    iff.intro 
+        (λ not_porq,
+            match (classical.em P) with
+            | or.inl p := false.elim (not_porq (or.inl p))
+            | or.inr np := match (classical.em Q) with
+                           | or.inl q := false.elim (not_porq (or.inr q))
+                           | or.inr nq := and.intro np nq
+                           end
+            end    
+        )
+        _
 
 
 theorem t12 : ∀ (P Q : Prop), ¬ (P ∧ Q) ↔ ¬ P ∨ ¬ Q :=
@@ -217,6 +258,11 @@ Prove the following
 theorem t13 : 
   (∃ (p : Person), ∀ (q : Person), Likes q p) → 
   (∀ (p : Person), ∃ (q : Person), Likes p q) :=
-_
+λ h, 
+    match h with
+    | exists.intro p pf := 
+        λ q, 
+            (exists.intro p (pf q))
+    end
 
 
