@@ -179,7 +179,7 @@ theorem t8 {P Q R : Prop} (p2r : P → R) (q2r : Q → R) (porq : P ∨ Q) : R :
 
 
 /-
-We suggestthat you use  "let ... in" to give
+We suggest that you use  "let ... in" to give
 names to intermediate results that you then combine
 in a final expression to finish the proof.
 -/
@@ -188,14 +188,7 @@ _
 
 
 
-theorem neg_elim : ∀ (P : Prop), (or P ¬ P) → ¬ ¬ P :=
-λ P h, 
-  match h with 
-  | or.inl p := _
-  | or.inr np := _
-  end 
-
-
+theorem neg_elim : ∀ (P : Prop), (P ∨ ¬ P) → ¬ ¬ P := _
 
 
 theorem t10 : ∀ (P : Prop), P ∨ ¬ P :=
