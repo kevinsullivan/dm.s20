@@ -1,145 +1,458 @@
+/-
+Today we will see in that proofs can be understood as formal
+objects in their own right. 
+
+We will start to make our way through the valid rules of
+inference from our unit on propositional logic. We will
+emphasize that they are rules for combining and deriving
+Boolean truth values. In predicate logic, by contrast, we
+will reinterpret them as rules for combining and deriving
+*proofs*. In predicate logic, the existence of a proof is
+our new basis for deciding whether or not a proposition 
+can be judged to be true.
+
+In particular, we will look at how to (1) *construct* and 
+(2) *use* given or assumed proofs of two simple forms of
+propositions, namely conjunctions and disjunctions. 
+
+We will see that we can view proofs as *computational*
+objects. 
+
+In particular, we will see that we can view a proof of a
+conjunction, P ∧ Q, as a *pair* of proofs (a proof of P
+*and* a proof of Q), and thus as a value of a *product* 
+type. We will then view a proof of a disjunction, P ∨ Q,
+as *either* an object constructed from a proof of P *or* 
+an object built from a proof of Q, and thus a value of a 
+*sum* type.  
+
+Understanding proof construction and manipulation as
+computations involving logical types (propositions) and
+values (proofs) will give you the precise understanding
+of deductive reasoning in predicate logic that you need
+to handle a very wide variety of "prove it" problems in
+the years to come, whether or not (and more likely not)
+you use an automated proof assistant such as Lean or its
+formalized proofs.
+-/
+
+/-
+To begin we will review our polymorphic product (pair)
+type. We will then see that the ∧ (and) connective in
+predicate logic can be understood and formalized as a
+completely analogous polymorphic *logical* type. It's
+one costructor implements the and introduction rule,
+and its two projection functions implement the two
+and elimination rules. 
+-/
+
+namespace hidden 
+
+-- review -- prod abstract data type!
 
 
-axiom P : Prop
-axiom Q : Prop
-axiom R : Prop
+-- be sure you fully understand this type definition
+inductive prod (α β : Type) : Type
+| mk (a : α) (b : β) : prod
 
 
--->> def true_intro : pExp := pTrue
-#check true       -- a type
-#check true.intro -- a constructor (value)
-#print true
+-- here's a named example of a value of this type
+def pair1 := prod.mk 1 1
 
--- true is a proposition 
--- in Lean represented as a type
--- intro is defined to be a proof of it (a value)
--- because there is proof, we judge the proposition to be true
--- a proof is necessary and sufficient *evidence* of truth
+#reduce pair1
 
--- *** FALSE ***
+-- by the way, we can use "example" for unnamed values
+example : prod nat nat := prod.mk 1 1
 
--- false
-#check false
-#print false
--- there is no proof of the proposition false
--- this is by definition of false as a type with no values
--- so we judge the proposition, false, to be false (untrue)
+-- the first, or left, projection function
+-- implemented by pattern matching (aka elimination!)
+def fst {α β : Type} : prod α β → α 
+| (prod.mk a b) := a 
 
--->> def false_elim := pFalse >> P
-#check @false.elim
+-- the second, or right, projection function
+def snd {α β : Type} : prod α β → β  
+| (prod.mk a b) := b 
+
+-- and a function that from one pair derives its swap
+def swap  {α β : Type} : prod α β → prod β α
+| (prod.mk a b) := prod.mk b a  
 
 
--- def true_imp := pTrue >> P
--- oops, this is not a valid law
+/-
+Our implementation of the and connective and its rules
+of inference (introduction and elimination rules) in 
+exactly the same way, except that our and polymorphic 
+pair type now lives in "Prop," the unverse of logical
+types (propositions), rather than in "Type", which as
+we know is the universe of computational types.
 
-def true_imp : ∀ (P : Prop), true → P :=
-λ P t, _
+As a reminder from propositional logic, here are three 
+rules of reasoning that we showed to be semantically valid. 
 
--- *** AND ***
+def and_intro := P >> Q >> P ∧ Q
+def and_elim_left := P ∧ Q >> P
+def and_elim_right := P ∧ Q >> Q
 
-#check and
-#print and
+In propositional logic, we read these rules as involving
+truth values: e.g., if P "is true" and Q "is true" then
+"P ∧ Q" "is true". We now reconceptualize these rules to
+involve proofs. E.g., If we have (or assume we have) a 
+proof, p, of P, and we have (or assume we have) a proof,
+q, of Q, then we can construct a proof, ⟨p, q⟩, of P ∧ Q.
+That's the and introduction rule. Similarly, if we have 
+a proof (pair!), ⟨p, q⟩, then from it we can derive a 
+proof, p, of P, and a proof, q, of Q, by nothing more
+complex than projection: we destructure the pair and
+return one of the other other of its two components.
 
--->> def and_intro := P >> Q >> P ∧ Q
-#check @and.intro -- constructor
+-/
 
--->> def and_elim_left := P ∧ Q >> P
-#check @and.elim_left
-#print and.elim_left
+structure and (P Q : Prop) : Prop :=    -- Prop not Type!
+intro :: (left : P) (right : Q)         -- and.intro rule
+
+-- one poassible way to write left elimination rule
+def and_elim_left {P Q : Prop} : and P Q → P
+| (and.intro p q) := p
+
+-- here's another, with elim_left in the "and" namespace
+-- note that we use projection function from "structure" 
+def and.elim_left {P Q : Prop}  (pq : and P Q) : P :=
+pq.left 
+
+-- and here is the right elimination rule in two forms
+def and_elim_right {P Q : Prop} : and P Q → Q
+| (and.intro p q) := q
+
+def and.elim_right {P Q : Prop}  (pq : and P Q) : Q :=
+pq.right
 
 
--->> def and_elim_right := P ∧ Q >> Q
-#check @and.elim_right
-#print and.elim_right
+/-
+A note on notation. The Lean libraries define the and
+connective exactly as we've done here. In addition, the
+Lean library defined ∧ as an infix notation for "and".
+We won't define that notation here, so wherever we want
+to use the and connective, e.g., for P ∧ Q, we'll have
+to write "and P Q". Same with or. 
+-/
 
--- *** OR ***
+-- tests
 
--->> def or_intro_left := P >> P ∨ Q
-#check @or.intro_left
+def pf1 : and (1=1) (eq 0 0) :=  -- 1=1 and 0=0
+  and.intro (eq.refl 1) (eq.refl 0) -- proof of it!
 
--->> def or_intro_right := Q >> P ∨ Q
-#check @or.intro_right
+-- We now see that pf1 is basically a pair of proofs
+#reduce pf1
 
--->> def or_elim := P ∨ Q >> (P >> R) >> (Q >> R) >> R
+
+
+/- OR
+
+We also formalize the logical connective, ∨, as an 
+inductive type with two (logical) type arguments,
+P and Q (two propositions). The both ∧ and ∨ take
+two propositions (logical types) as arguments and
+yield a larger proposition (logical type). We then
+define constructors to implement the introduction
+rules for the given connective. 
+
+To build a proof of P ∧ Q, we need proofs of both
+P and of Q. To build a proof of P ∨ Q it suffices
+to have either a proof of P or a proof of Q. 
+
+Here are the propositional logic rules we validated
+in the last section.
+
+def or_intro_left := P >> P ∨ Q
+def or_intro_right := Q >> P ∨ Q
+def or_elim := P ∨ Q >> (P >> R) >> (Q >> R) >> R
+
+We now reconceptualize these rules are rules about
+how *proofs* can be built and derived.
+-/
+
+
+#check or
+
+inductive or (P Q : Prop) : Prop
+| inl {} (p : P) : or   -- Q is implicit
+| inr {} (q : Q) : or   -- P is implicit
+
+
+-- example, proof of 0=0 ∨ 1=0
+example : or (eq 0 0) (eq 1 0) :=
+or.inl (eq.refl 0)
+
 #check @or.elim
 
--- *** IFF ***
-
-#check iff
-#print iff
-
--- def iff_intro := (P >> Q) >> (Q >> P) >> (P ↔ Q)
-#check @iff.intro
-
--- def iff_elim_left := (P ↔ Q) >> (P >> Q)
-#check @iff.elim_left
-#check @iff.mp
-
--- def iff_elim_right := (P ↔ Q) >> (Q >> P)
-#check @iff.elim_right
-#check @iff.mpr
-
--- *** ARROW ***
-
--- introduction rule:
--- if you show that given any (p : P) you can derive
--- a value (q : Q), then you've proven P → Q. To prove
--- P → Q, define any function of this type. The totality
--- of functions in Lean is essential here: to the "any".
-  
--- def arrow_elim := (P >> Q) >> P >> Q
--- if you're given a function of type P → Q and 
--- any value of type P, you can derive one of type Q
-
-axiom p : P
-axiom pf : P → Q
-#check (pf p)
-
--- *** RESOLUTION ***
---def resolution := (P ∨ Q) >> (¬ Q ∨ R) >> (P ∨ R)
---def unit_resolution := (P ∨ Q) >> ¬ Q >> P
-
--- The resolution rules are used in some automated
--- theorem provers. We won't study them in this class
--- That said, they are clearly valid reasoning rules.
-
--- *** NEGATION
-
--- def neg_intro := (P >> pFalse) >> (¬ P)
-#print not
-
--- def neg_elim := (¬¬P) >> P -- "proof by contradiction"
-
-#check classical.em
+example : or (eq 1 0) (eq 0 0) :=
+or.inr (eq.refl 0)
 
 
--- *** THEOREMS ***
+/-
+Prove that 1=1 and 2=2.
 
--- def syllogism := (P >> Q) >> (Q >> R) >> (P >> R)
-def syllogism : ∀ {P Q R : Prop}, (P → Q) → (Q → R) → (P → R) :=
-  λ (P Q R : Prop) (pq : P → Q) (qr : Q → R), 
-    qr ∘ pq
+Q: What's the form of this proposition?
+A: Conjunction. Main connective is and.
+Q: What rule of reasoning apply?
+A: The "and" introduction and elimination rules.
+Q: What is the form of the overall proof?
+A: and.intro p q, where p is a proof of P and q is a proof of Q.
+Q: So what remains to be done? 
+A: It will now suffice to produce a proof of 1=1 and one of 2=2.
+Q: How to prove 1=1? 
+A: By the reflexive property of equality. 
+Q: How to prove 2 =2.
+A: Same way. 
+QED! 
+-/
 
---def modus_tollens := (P >> Q) >> (¬ Q >> ¬ P)
-theorem modus_tollens : ∀ {P Q : Prop}, (P → Q) → ¬ Q → ¬ P :=
-λ P Q pq nq, syllogism pq nq
+-- Here it is formally
 
--- *** AXIOMS ***
-
--- def excluded_middle := P ∨ (¬ P)
-#check classical.em
+example : and (1=1) (2=2) :=
+  and.intro (eq.refl 1) (eq.refl 2)
 
 
--- *** NON-THEOREMS (FALSEHOODS) ***
---def affirm_consequence := (P >> Q) >> (Q >> P)
+/-
+The following versions of the introductions rules take two explicit
+arguments each: a *proposition* for which a proof is *not* given and
+a proof of the other proposition. Notice carefully the change in which
+type argument is implicit in each case. Sometimes Lean can't infer 
+from, say, a proof, p, of P, what disjunction, P ∨ Q, is being proved
+(because it can't figure out what Q is). In such cases, you need to 
+provide the Q type explicitly. These functions are useful in such cases. 
+-/
+def or.intro_left {P : Prop} (Q : Prop) (p : P) : or P Q :=
+or.inl p
 
-theorem affirm_consequence : ∀ {P Q : Prop}, (P → Q) → Q → P :=
-λ P Q pq q, _                             -- sTuCK!
+def or.intro_right (P : Prop) {Q : Prop} (q : Q) : or P Q :=
+or.inr q
 
---def affirm_disjunct := (P ∨ Q) >> (P >> ¬ Q)
-theorem  affirm_disjunct : ∀ {P Q : Prop }, (P ∨ Q) → P → ¬ Q :=
-λ (P Q : Prop) (pq : P ∨ Q) (p : P), _    -- sTuCK!
 
---def deny_antecedent := (P >> Q) >> (¬ P >> ¬ Q)
-theorem deny_antecedent : ∀ {P Q : Prop }, (P → Q) → (¬P → ¬Q) :=
-λ P Q pq np, _  
+/-
+Prove 1=0 or 1=1.
+
+Proof: We apply the or introduction on the right rule to a
+proof of 1=1. Now all that remains is to to that 1=1. This is 
+by applying the reflexive property of equality (to the value,
+1).
+-/
+
+-- Here is this proof formalized
+example : or (1=0) (1=1) := or.inr (eq.refl 1) 
+example : or (1=0) (1=1) := or.intro_right (1=0) (eq.refl 1) 
+
+def x : ℕ := 1
+example : ℕ := 1
+
+
+
+
+/-
+NEXT UP: ∀, → 
+-/
+
+/-
+************************************************************
+Universal generalizations. Propositions starting with forall.
+************************************************************
+-/
+
+
+/-
+Introduction rule: To prove "∀ (p : P), Q" show that if you *assume*
+you're given an arbitrary but specific p, you can construct a proof
+of Q. This is the ∀ introduction rule of natural deduction.
+-/
+example : ∀ (n : ℕ), or (n = 0) (n ≠ 0) :=
+  λ (n : ℕ),
+    match n with
+    | nat.zero := or.inl (eq.refl 0)
+    | (nat.succ _) := _    -- Homework
+    end 
+
+/-
+Proof: 
+We start by assuming that we're given an arbitrary but specific 
+natural number, n. Now in this context, all that remains to be
+proved is that n = 0 or n ≠ 0.
+-/
+
+
+/-
+Prove that for any propositions, P and Q, P ∧ Q → P ∨ Q
+-/
+
+def aProp := ∀ (P Q : Prop), and P Q → or P Q 
+
+/-
+We start by assuming that P and Q are arbitrary but specific
+propositions. In this context, what remains to be proved is
+the following implication: and P Q → or P Q. To prove this is
+to prove an implication. We do this in the same way we prove
+a ∀: by assuming that we're given a proof of the premise, P, 
+and showing that, in that context, we can construct a proof 
+of the conclusion, Q.
+-/
+
+lemma and_imp_or_1 : aProp := 
+  λ (P Q : Prop),
+    λ (pq : and P Q),
+      or.inl (and.elim_left pq)
+
+lemma and_imp_or_2  : aProp := 
+  λ (P Q : Prop),
+    λ (pq : and P Q),
+      or.inr (and.elim_right pq)
+
+example : and_imp_or_1 = and_imp_or_2 := eq.refl and_imp_or_2
+
+
+/-
+Prove that the "and" connective is commutative.
+-/
+
+theorem and_commutes : ∀ {P Q : Prop}, and P Q → and Q P :=
+λ (P Q : Prop), 
+  λ (pq : and P Q),
+    and.intro 
+      (pq.right) 
+      (pq.left)
+
+/-
+Assume that P and Q are arbitary but specific propositions.
+We are to show that P ∧ Q → Q ∧ P. Suppose we have a proof,
+pq, of P ∧ Q. In this context we need to prove that we can
+construct a proof of Q and P. We do this by applying the and
+introduction rule to a proof of P and to a proof of Q. What
+remains to be proven is that there is a proof of P and a proof
+of Q. But we can get these by applying the left and right and
+eliminations rules to our proof, pq, of P ∧ Q.
+-/
+
+/-
+If a proof of a ∀ or → proposition is a function in Lean,
+can we apply these functions to arguments to get results?
+The answer is yes, absolutely, and this idea is in fact
+the *elimination* rule for ∀ and →. If you're given a 
+proof, pf, of either ∀ (p : P), Q, or of P → Q, which are
+in fact equivalent(!), then you can apply pf to a proof or
+value, p : P, to obtain a corresponding value/proof of Q.
+
+As an example, let's apply our proof that and is commutative
+-/
+lemma oneeq1_and_2eq2 : and (1=1) (2=2) :=
+  and.intro (eq.refl 1) (eq.refl 2)
+
+#reduce oneeq1_and_2eq2
+
+/-
+We now use the elimination rule for ∀/→ by *applying* the
+*general* proof of commutative of and to a *specific* proof
+of (and 1=1 2=2) to obtain a specific proof of (and 2=2 1=1)!
+-/
+#reduce and_commutes oneeq1_and_2eq2 
+
+/-
+The *elimination* rule for ∀ all and implication is "apply!"
+-/
+
+/-
+This principal is seen very clearly in the proof of the
+rule of reasoning that Aristotle called "modus ponens." 
+It states that if, for any propositions P and Q, you know
+that P → Q is true and you also know that P is true then
+you can conclude that Q is true. If when it's raining the
+streets are wet (P → Q) and it's raining (P) then it must
+be the case that the streets are wet (Q). We now prove that
+this is a valid form of reasoning.
+-/
+
+theorem arrow_elim : ∀ {P Q : Prop}, (P → Q) → P → Q :=
+λ (P Q : Prop),
+  λ (p2q : P → Q),
+    λ (p : P),
+      p2q p       ---<<< apply proof of P→Q to proof of P!
+
+
+/--- TODAY ---/
+
+/-
+Propositions that use ¬
+-/
+
+/-
+Suppose you want to prove ¬P. We have to show that there's no proof of P.
+Key strategy: Proof by negation. Assume that P is true, and show that this
+assumption leads to a contradiction. Equivalent to a proof of false. So the
+idea is this: assume that there is a proof of P and show that this enables
+you to construct a proof of false.
+
+¬ P ==== P → false
+-/
+
+example : 0 ≠ 1 := 
+/- ¬ (0 = 1) -/
+/- (0 = 1) → false -/
+λ (h : 0 = 1), 
+  match h with /- NO CASES! -/ end
+
+theorem mt : ∀ {P Q}, (P → Q) → (¬Q → ¬P) :=
+λ P Q,
+  λ (h : P → Q),
+    λ (nq : ¬Q),
+      λ (p : P),
+       nq (h p)
+
+theorem non_contradiction: ∀ (P : Prop), ¬ (P ∧ ¬ P) := 
+  λ P,                    -- forall introduction 
+    λ (h : P ∧ ¬P),       -- proof by negation
+      let p := (h.left) in -- and.elim_left 
+      let np := (h.right) in -- and.elim_right
+      (np p)    
+
+
+theorem zornz : ∀ (n : ℕ), or (n = 0) (n ≠ 0) :=
+λ (n : ℕ),
+  match n with
+  | nat.zero := or.inl (eq.refl 0)
+  | (nat.succ n') := or.inr _         -- complete this proof
+  end
+
+
+/-
+Propositions that use ∃ 
+-/
+
+example : ∃ n, n = 0 := exists.intro 0 (eq.refl 0)
+
+example : ∃ n, n^2 = 25 := exists.intro 5 rfl
+
+example : ∃ x : nat, ∃ y: nat, ∃ z : ℕ, x^2 +y^2 = z^2 := 
+exists.intro 3 
+  (exists.intro 4 
+    (exists.intro 5 (rfl)))
+
+/-
+Propositions that use both ∃ and ∀  
+-/
+
+
+
+/- Still to do:
+
+def iff_intro := (P >> Q) >> (Q >> P) >> (P ↔ Q)
+def iff_intro' := (P >> Q) ∧ (Q >> P) >> (P ↔ Q)
+def iff_elim_left := (P ↔ Q) >> (P >> Q)
+def iff_elim_right := (P ↔ Q) >> (Q >> P)
+def syllogism := (P >> Q) >> (Q >> R) >> (P >> R)
+def modus_tollens := (P >> Q) >> (¬ Q >> ¬ P)
+def neg_elim := (¬ ¬ P) >> P         -- not a constructive rule
+def excluded_middle := P ∨ (¬ P)     -- not a constructive rule
+def neg_intro := (P >> pFalse) >> (¬ P)
+def true_intro : pExp := pTrue
+def false_elim := pFalse >> P
+-/
+
+
+end hidden

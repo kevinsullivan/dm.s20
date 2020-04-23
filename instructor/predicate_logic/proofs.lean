@@ -369,8 +369,74 @@ this is a valid form of reasoning.
 -/
 
 theorem arrow_elim : ∀ {P Q : Prop}, (P → Q) → P → Q :=
-λ P Q p2q p,
-  p2q p       ---<<< apply proof of P→Q to proof of P!
+λ (P Q : Prop),
+  λ (p2q : P → Q),
+    λ (p : P),
+      p2q p       ---<<< apply proof of P→Q to proof of P!
+
+
+/--- TODAY ---/
+
+/-
+Propositions that use ¬
+-/
+
+/-
+Suppose you want to prove ¬P. We have to show that there's no proof of P.
+Key strategy: Proof by negation. Assume that P is true, and show that this
+assumption leads to a contradiction. Equivalent to a proof of false. So the
+idea is this: assume that there is a proof of P and show that this enables
+you to construct a proof of false.
+
+¬ P ==== P → false
+-/
+
+example : 0 ≠ 1 := 
+/- ¬ (0 = 1) -/
+/- (0 = 1) → false -/
+λ (h : 0 = 1), 
+  match h with /- NO CASES! -/ end
+
+theorem mt : ∀ {P Q}, (P → Q) → (¬Q → ¬P) :=
+λ P Q,
+  λ (h : P → Q),
+    λ (nq : ¬Q),
+      λ (p : P),
+       nq (h p)
+
+theorem non_contradiction: ∀ (P : Prop), ¬ (P ∧ ¬ P) := 
+  λ P,                    -- forall introduction 
+    λ (h : P ∧ ¬P),       -- proof by negation
+      let p := (h.left) in -- and.elim_left 
+      let np := (h.right) in -- and.elim_right
+      (np p)    
+
+
+theorem zornz : ∀ (n : ℕ), or (n = 0) (n ≠ 0) :=
+λ (n : ℕ),
+  match n with
+  | nat.zero := or.inl (eq.refl 0)
+  | (nat.succ n') := or.inr _         -- complete this proof
+  end
+
+
+/-
+Propositions that use ∃ 
+-/
+
+example : ∃ n, n = 0 := exists.intro 0 (eq.refl 0)
+
+example : ∃ n, n^2 = 25 := exists.intro 5 rfl
+
+example : ∃ x : nat, ∃ y: nat, ∃ z : ℕ, x^2 +y^2 = z^2 := 
+exists.intro 3 
+  (exists.intro 4 
+    (exists.intro 5 (rfl)))
+
+/-
+Propositions that use both ∃ and ∀  
+-/
+
 
 
 /- Still to do:
@@ -379,7 +445,6 @@ def iff_intro := (P >> Q) >> (Q >> P) >> (P ↔ Q)
 def iff_intro' := (P >> Q) ∧ (Q >> P) >> (P ↔ Q)
 def iff_elim_left := (P ↔ Q) >> (P >> Q)
 def iff_elim_right := (P ↔ Q) >> (Q >> P)
-def arrow_elim := (P >> Q) >> (P >> Q)
 def syllogism := (P >> Q) >> (Q >> R) >> (P >> R)
 def modus_tollens := (P >> Q) >> (¬ Q >> ¬ P)
 def neg_elim := (¬ ¬ P) >> P         -- not a constructive rule
@@ -388,5 +453,6 @@ def neg_intro := (P >> pFalse) >> (¬ P)
 def true_intro : pExp := pTrue
 def false_elim := pFalse >> P
 -/
+
 
 end hidden
