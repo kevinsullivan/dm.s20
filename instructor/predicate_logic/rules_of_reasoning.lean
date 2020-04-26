@@ -104,7 +104,6 @@ a proof (pair!), ⟨p, q⟩, then from it we can derive a
 proof, p, of P, and a proof, q, of Q, by nothing more
 complex than projection: we destructure the pair and
 return one of the other other of its two components.
-
 -/
 
 structure and (P Q : Prop) : Prop :=    -- Prop not Type!
