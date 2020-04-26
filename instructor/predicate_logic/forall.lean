@@ -73,4 +73,10 @@ You can think of a theorem as a subroutine that you
 have already implemented that you can apply whenever
 you need it! This idea is what allows mathematics to
 work, so not every proof has to start from scratch.
+
+In the constructive logic of Lean, indeed a proof of
+∀ (p : P), Q, *is* a function: one that, if given any
+proof (or equivalently, a value) of P returns a proof
+(a value) of Q.
 -/
+
