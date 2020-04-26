@@ -205,19 +205,40 @@ Exercise: Prove 0 = 0 using proof by contradiction.
 
 example : 0 = 0 :=
 neg_elim _
--- answer: (λ nzeqz, nzeqz (eq.refl 0))
+-- Note carefully what neg_elim needs.
+
+-- Answer: (λ nzeqz, nzeqz (eq.refl 0))
 
 /-
-We apply neg_elim, which is proof by negation.
-What it requires is a proof of ¬¬0=0. That is,
-it requires a proof of ¬0=0 → false. To prove
-this, we assume ¬0=0 and show that this leads
-to a contradiction. This is done by using refl
-to construct a proof of 0=0 and by seeing that
-this directly contradicts ¬0=0. So it must be
-that ¬¬0=0 is true. The assumption that ¬0=0
-led to a contradiction, so it must have been
-wrong, so ¬¬0=0 must be true, and finally by
-the principle of negation elimination we have
-proved 0=0. QED.  
+We apply neg_elim, which is the strategy of
+proof by contradiction.
+
+What it requires is a proof of ¬¬0=0. It
+transforms the goal 0=0 into the goal ¬¬0=0!
+
+That is, it requires a proof of ¬0=0 → false. 
+To prove this, we assume ¬0=0 (the negation
+of the proposition to be proved) and show that
+this assumption leads to a contradiction and so
+must be false. This is done by using refl to
+construct a proof of 0=0 and by seeing that
+this directly contradicts the assumption ¬0=0. 
+So the assumption is show to be false and we
+conclude that ¬¬0=0 is true. Finally by the
+the (classical) rule of negation elimination
+we have proved 0=0. QED.  
+-/
+
+/-
+Proof Strategies: 
+
+Proof by negation. To prove ¬ P,  show that 
+assuming P leads to a contradiction, so P
+must be false. That proves ¬ P. 
+
+Proof by contradiction. To prove P (notice the
+difference), show that assuming ¬ P leads to a
+contradiction. Conclude that ¬ P is false, that
+is ¬ ¬ P is true. Then use negation elimination
+to deduce that P must be true.
 -/
