@@ -127,3 +127,97 @@ example : ∀ (P Q : Prop), P → ¬ P → Q :=
 You may use this "tactic" if you wish on
 the exam, but won't be required to do so.
 -/
+
+
+/-
+Finally we come to the elimination rule for
+negation (not). In predicate logic, this is
+the rule that allows us to deduce the truth
+of any proposition, P, from a proof of ¬ ¬ P.
+
+As we've seen, this rule *not* valid in the
+constructive logic of Lean but can be made
+valid by accepting the axiom of the excluded
+middle.
+-/
+
+theorem em_implies_neg_elim : 
+    (∀ (P : Prop), P ∨ ¬ P) → 
+    (∀ (P : Prop), ¬ ¬ P → P) :=
+λ excluded_middle, 
+λ P nnp,
+match (excluded_middle P) with
+| or.inl p := p
+| or.inr np := false.elim (nnp np)
+end
+
+/-
+In English, suppose that for any proposition,
+P, P ∨ ¬ P is true (and that you have a proof
+of this disjunction). Prove that given any P,
+¬ ¬ P → P.
+
+Proof: By case analysis on the assumed proof
+of P ∨ ¬ P. First consider the case in which 
+it is true because P is true. In this case, 
+the conclusion, P, is obviously true.
+
+Now consider the case in which P ∨ ¬ P is true
+because ¬ P is true. But this case can't happen
+because we've already assumed that ¬ P is false
+(¬(¬P) is true). In other words, this case leads
+to a contradiction, and so can be ignored). QED.
+-/
+
+/-
+Here's a key proof strategy. It's called "proof
+by contradiction". Suppose we want to prove P. 
+One way to do it is to assume ¬ P and show that
+this leads to a contradiction. This shows that
+¬ P must be false, therefore ¬ ¬ P is true by
+negation. But (assuming the law of the excluded
+middle), ¬ ¬ P → P, which proves P.
+
+Be able to state this principle clearly: To 
+prove P, assume that it is false, show that
+this assumption leads to a contradition, which
+shows ¬ ¬ P is true, and then deduce using the
+principle of negation elimination (which relies
+on the law of the excluded middle) that P must
+be true. 
+-/
+
+/-
+Let's accept negation elimination as a theorem.
+-/
+
+theorem neg_elim : ∀ {P : Prop}, ¬ ¬ P → P :=
+λ P nnp, 
+    match (classical.em P) with
+    | or.inl p := p
+    | or.inr np := false.elim (nnp np)
+    end
+
+
+/-
+Exercise: Prove 0 = 0 using proof by contradiction.
+-/
+
+example : 0 = 0 :=
+neg_elim _
+-- answer: (λ nzeqz, nzeqz (eq.refl 0))
+
+/-
+We apply neg_elim, which is proof by negation.
+What it requires is a proof of ¬¬0=0. That is,
+it requires a proof of ¬0=0 → false. To prove
+this, we assume ¬0=0 and show that this leads
+to a contradiction. This is done by using refl
+to construct a proof of 0=0 and by seeing that
+this directly contradicts ¬0=0. So it must be
+that ¬¬0=0 is true. The assumption that ¬0=0
+led to a contradiction, so it must have been
+wrong, so ¬¬0=0 must be true, and finally by
+the principle of negation elimination we have
+proved 0=0. QED.  
+-/
