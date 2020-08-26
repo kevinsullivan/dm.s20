@@ -1,28 +1,41 @@
 /-
 Proof strategies.
 
-- direct proof: use established facts
+- DIRECT PROOF: from established facts
 
-- by negation: to prove ¬ P, assume P;
-  show that this yields a contradiction,
-  from which a proof of false can then 
-  be derived. This shows P → false, and
-  that is the definition of ¬ P.
+- BY NEGATION: to prove ¬ P, assume P;
+  show that this yields a contradiction.
+  From this a proof of false can then 
+  be derived. This shows P → false. And
+  that is the definition of ¬P.
 
-  Prove that the square root of two is
-  irrational.
+  Example: Prove that the square root of
+  two is irrational.
+
+  It sounds like we're trying to prove P,
+  where P := "sqrt(2) is irrational". But
+  it's better to take P to be the proposition
+  that "sqrt(2) is rational", and to view
+  the goal as to prove ¬ P.
 
   Prove that the square root two is NOT
   rational.
 
-  Prove ¬ sqrt(2) is rational.
+  Prove "¬ sqrt(2) is rational".
 
-  Proof: assume sqrt(2) is rational. In
-  this case, we can write sqrt(2) as some
-  fraction, a/b. We now want to show that
-  this leads to a contradiction. ...
+  Proof: BY NEGATION. assume sqrt(2) is 
+  rational. In this case, we can write
+  sqrt(2) as some fraction, a/b (for that
+  is what it means for a number to be 
+  rational). We now want to show that
+  this leads to a contradiction so that
+  we can conclude that our assumption is
+  false, thus ¬ P is true. Details left
+  as an exercise.
 
-  - by contradiction : to prove P, assume
+
+
+  - BY CONTRADICTION : to prove P, assume
     ¬ P and show that this leads to a
     contradiction, from which a proof of
     false can be derived. This proves
@@ -49,7 +62,16 @@ Proof strategies.
     ¬ (¬ 0=0). The by classical negation
     elimination, this implies 0 = 0.
 
-    - Today: proof by induction.
+    BY CASE ANALYSIS. Show that for any
+    possible form that an assumed value
+    can take (e.g., nat.zero or nat.succ
+    n' for some n'), i.e., for each of 
+    its possible constructors, that the
+    goal must be true. Then in must be 
+    true in ALL cases, which proves that
+    it is valid.
+
+    - Today: proof BY INDUCTION.
 -/
 
 -- Answer to question about why contradictions imply false
@@ -108,37 +130,70 @@ proof strategy.
 Here's the idea: 
 
 - every inductively defined type has a
-  corresponding induction rule
+  corresponding induction rule, which  is
+  a rule for showing that some predicate
+  is true for *every* value of that type
 
-- It's a rule for showing that some
-  proposition is true for *every* value
-  of the given type
-
-- The induction principle for ℕ is this:
+- Here's induction principle for the ℕ type:
   ∀ P : (ℕ → Prop),
   P 0 → 
   ((∀ n' : ℕ), P n' → P (nat.succ n')) → 
   ∀ n, P n
 
+In other words, for any property of natural
+numbers (a predicate that takes a natural
+number as an argument), *if* 0 satisfies 
+the predicate and whenever any n' satisfies
+it, so does n'+1, then the predicate is
+true/satisfied by *all* natural numbers.
+
+Think of the a proof of (P 0) as "showing that
+the first domino falls", and (P n' → P (n' + 1))
+as showing that "whenever *any* domino falls, so
+does the next one."" Together these proofs show
+that all the dominos fall. 
+
+[THIS IS THE KEY THING TO REMEMBER: The
+induction principle. Mathematical induction
+is nothing but the induction principle for
+ℕ. There is a corresponding induction rule
+for every inductively defined type.]
+
 In other words, for any predicate/property
-P, to show ∀ (n : ℕ), P n, it *suffices* 
+P, to show that ∀ (n : ℕ), P n, it suffices 
 to show the following: 
     (1) P 0, 
     (2) (∀ n' : ℕ), P n' → P (nat.succ n')
 -/
 
 /-
+The next key idea in a proof by induction 
+is that when proving (2), you get to *assume*
+that P holds for some arbitrary n' and all you
+have to do is to show that in this context it
+must also hold for n'+1.
+-/
+
+/-
 Example: We want to prove ∀ n, n + 0 = n.
 Proof by induction. If suffices to show that
-(1) Case: n = 0. By first rule of my_add.
+(1) Case: n = 0. We need to show 0 + 0 = 0. 
+    This is trivially proved by applying the first rule of my_add.
+    So we have now proved (P 0).
 (2) Case: n = nat.succ n': 
     Show P n' → P (nat.succ n').
-    Assume P n'? my_add n' 0 = n'
-    Wow show P (nat.succ n'), (nat.succ n') + 0 = (nat.succ n').
-    *** simp: nat.succ (my_add n' 0) = nat.succ n' --do some algebra!
-    *** apply induction hypothesis: nat.succ n' = nat.succ n'
-    Finish by reflexive property of equality.
-     
+    In other words, show n'+ 0 =n' → (n' + 1) + 0 = (n' +1). 
+    Assume P n'? I.e., assume that: my_add n' 0 = n'
+    Now show P (nat.succ n'): that my_add (nat.succ n') 0 = (nat.succ n').
+    *** simplify: my_add (nat.succ n' 0) = 
+                  nat.succ (my_add n' 0) = --2nd rule of my_add
+    *** apply induction hypothesis, that my_add n' 0 = n'.
+    Now we have my_add (nat.succ n' 0) = nat.succ n'.
+    We have thus now proved (2), that P n' → P (nat.succ n').
+    Applying the induction principle to these proofs yields a proof
+    of ∀ n, n + 0 = n.
+    QED.
+
 def my_add : ℕ → ℕ → ℕ 
 | nat.zero m := m
 | (nat.succ n') m := nat.succ (my_add n' m)

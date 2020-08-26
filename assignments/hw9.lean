@@ -20,7 +20,8 @@ theorem t1 {P Q : Prop} (p2q : P → Q) (p : P) : Q :=
 
 
 theorem t2 {P Q R : Prop} (p2q : P → Q) (q2r : Q → R): P → R :=
-  _
+  λ (p : P), 
+    q2r (p2q p)
 
 /-
 Use "example" to state and prove the preceding two 
@@ -36,7 +37,8 @@ example : ℕ := 5
 
 -- Your two answers here
 
-
+example : ∀ (P Q R : Prop), (P → Q) → (Q → R) → P → R :=
+λ P Q R p2q q2r, λ p, _
 
 
 /-
@@ -52,22 +54,25 @@ notation.
 -/
 
 theorem t3 : ∀ (P : Prop), false → P
-| P f := _
+| P f := false.elim _
+
+theorem t3' : ∀ (P : Prop), false → P
+| P f := match f with /- no cases!-/ end
 
 
 /-
 Prove false → true by applying t3 to a proposition.
 You have to figure out which one.
 -/
-theorem t4 : false → true := t3 _
+theorem t4 : false → true := t3 true
 
 /-
 Define t5 to be the same as t3 but with P taken as
 an implicit argument.
 -/
 
-theorem t5 : ∀ {P : Prop}, false → P
-| P f := _
+theorem t5 : ∀ {P : Prop}, false → P   /- false elimination-/
+| P f := false.elim f
 
 
 /-
@@ -75,7 +80,7 @@ Define t6 to be a proof of false → true by
 applying t5 to the right argument(s). 
 -/
 
-theorem t6 : false → true := _
+theorem t6 : false → true := t5
 
 /-
 That is almost magic. In English, t3 proves 
@@ -157,8 +162,17 @@ to see what you have to work with at each point in
 your proof constructions.
 -/
 theorem t7 : ∀ {P Q : Prop}, P ∧ Q ↔ Q ∧ P :=
-_
+λ P Q,
+  iff.intro 
+    (λ pandq, 
+      and.intro _ _
+    ) 
+    _
 
+-- P ∧ Q -- and.intro p q
+-- P ↔ Q -- iff.intro p2q q2p
+---- assume P then show Q (P → Q)
+---- assume Q then show P (Q → P)
 
 /-
 In English, when asked to prove P ↔ Q, one says, "it
@@ -174,9 +188,29 @@ The trick here is to do case analysis on porq
 (use match ... with ... end) and to show that 
 a proof of R can be constructed *in either case*.
 -/
-theorem t8 {P Q R : Prop} (p2r : P → R) (q2r : Q → R) (porq : P ∨ Q) : R := _
+theorem t8 
+          {P Q R : Prop} 
+          (p2r : P → R) 
+          (q2r : Q → R) 
+          (porq : P ∨ Q) : 
+          R := match porq with
+                | or.inl p := p2r p
+                | or.inr q := _
+              end
 
+theorem t8' 
+          {P Q R : Prop} 
+          (p2r : P → R) 
+          (q2r : Q → R) 
+          (porq : P ∨ Q) : 
+          R := or.elim porq p2r q2r
 
+/-
+Prove P ∨ Q → R. Well, it will suffice to
+show P → R and then to show that Q → R (because
+if we do that then we can use or.elim to get a
+proof of R.)
+-/
 
 /-
 We suggest that you use  "let ... in" to give
@@ -184,9 +218,31 @@ names to intermediate results that you then combine
 in a final expression to finish the proof.
 -/
 theorem t9 : ∀ (P Q: Prop), (P → Q) → ¬ (P ∧ ¬ Q) :=
-_
+λ P Q,
+  λ p2q,  
+    -- ¬ (P ∧ ¬ Q) === (P ∧ ¬ Q) → false
+    λ ( pandnotq : (P ∧ ¬ Q)), 
+      (
+        let p := pandnotq.left in
+        let nq := pandnotq.right in
+        let q := p2q p in
+        nq q
+      )
 
+/-
+To prove ¬P, assume P and show that this leads to
+a contradiction, then from that derive a proof of 
+false, and use false.elim to finish the proof. This
+is *proof by negation*.
+-/
 
+/- 
+The following is about proof by contradiction.
+To prove P, assume ¬ P, and show that leads to
+a contradiction. This shows ¬ (¬ P). Now, use 
+the *classical* principle of negation elimination
+to deduce P.
+-/
 
 theorem neg_elim' : ∀ (P : Prop), ¬ ¬ P → P :=
 λ P,
@@ -196,12 +252,18 @@ _           -- STUCK!!
 
 theorem neg_elim : ∀ (P : Prop), (P ∨ ¬ P) → (¬ ¬ P → P):= 
 λ P,
-    λ h, 
+    λ pornotp, 
         λ nnp,
-            match h with
+          match pornotp /- P or ¬P -/ with
+          | or.inl p := p
+          | or.inr np := false.elim (_)
+          end
+        /-
+            match excl_middle with
             | or.inl p := p
             | or.inr np := false.elim (nnp np)  -- false elimination
             end
+        -/
 
 -- nnp : (¬ P) → false
 -- np : ¬ P
@@ -225,23 +287,43 @@ _
 #check @or.inl
 #check @or.inr
 
+/-
+DeMorgan's Laws
+-/
+
 theorem t11 : ∀ (P Q : Prop), ¬ (P ∨ Q) ↔ ¬ P ∧ ¬ Q :=
 λ P Q, 
     iff.intro 
         (λ not_porq,
-            match (classical.em P) with
-            | or.inl p := false.elim (not_porq (or.inl p))
-            | or.inr np := match (classical.em Q) with
-                           | or.inl q := false.elim (not_porq (or.inr q))
-                           | or.inr nq := and.intro np nq
-                           end
-            end    
+             match (classical.em P) with
+             | or.inl p := false.elim (not_porq (or.inl p))
+             -- ¬(P ∨ Q) === (P ∨ Q → false)
+             | or.inr np := false.elim (not_porq _)
+             end
         )
-        _
+        (
+          λ npandnq, 
+            λ porq,
+              match porq with
+              | or.inl p := _
+              | or.inr q := _
+              end
+        )
 
 
 theorem t12 : ∀ (P Q : Prop), ¬ (P ∧ Q) ↔ ¬ P ∨ ¬ Q :=
-_
+λ P Q,
+  iff.intro
+    (λ not_pandq,
+      match (classical.em P) with
+      | or.inl p := match (classical.em Q) with
+                    | or.inl q := false.elim (not_pandq _)
+                    | or.inr nq := _
+                    end
+      | or.inr np := _
+      end 
+    )
+    _
 
 /-
 For the following exercises, we assume that there is 
@@ -258,11 +340,18 @@ Prove the following
 theorem t13 : 
   (∃ (p : Person), ∀ (q : Person), Likes q p) → 
   (∀ (p : Person), ∃ (q : Person), Likes p q) :=
+  λ h,
+    λ p, 
+      match h with
+      | exists.intro loved pf := exists.intro loved _
+      end
+
+/-
 λ h, 
     match h with
     | exists.intro p pf := 
         λ q, 
             (exists.intro p (pf q))
     end
-
+-/
 
